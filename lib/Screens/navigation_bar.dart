@@ -1,59 +1,74 @@
+import 'package:final_project1/Screens/SearchScreen.dart';
 import 'package:final_project1/Screens/explore_screen.dart';
 import 'package:final_project1/Screens/favorites_screen.dart';
 import 'package:final_project1/Screens/profile_screen.dart';
 import 'package:final_project1/Screens/settings_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'map_screen.dart';
-
+import 'package:final_project1/Models/Map_list.dart';
+import 'community_screen.dart';
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
 class NavigationScreen extends StatefulWidget {
-  const NavigationScreen({Key?key}):super(key:key);
+  NavigationScreen({Key? key}) : super(key: key);
   @override
-  _NavigationScreenState createState()=>_NavigationScreenState();
+  _NavigationScreenState createState() => _NavigationScreenState();
 }
+
 class _NavigationScreenState extends State<NavigationScreen> {
-  int myCurrentIndex=1;
-  List pages=const[
-    ExploreScreen(),
-    FavoritesScreen(),
-    ProfileScreen(),
-    SettingsScreen(),
+  int bottomNavIndex = 0;
+  List<trail> favorites = [];
+
+  List<Widget> _widgetOptions() {
+    return [
+      const ExploreScreen(),
+      FavoritesScreen(favoriteTrails: favorites),
+      ProfileScreen(),
+      CommunityScreen(),
+      SettingsScreen(),
+    ];
+  }
+
+  //List of the pages icons
+  List<IconData> iconList = [
+    Icons.explore,
+    Icons.favorite,
+    Icons.person,
+    Icons.people_rounded,
+    Icons.settings,
   ];
+
+  //List of the pages titles
+  List<String> titleList = [
+    'Home',
+    'Favorites',
+    'Profile',
+    'Community',
+    'Settings'
+  ];
+
   @override
-  Widget build(BuildContext) {
+  Widget build(BuildContext context) {
     return Scaffold(
-    bottomNavigationBar: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Colors.black45.withOpacity(0.9),
-          blurRadius: 30,
-          offset: const Offset(8, 20)
-        )
-      ]),
-      child:  ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: BottomNavigationBar(
-          selectedItemColor: Color(0xff064430),
-          unselectedItemColor: Color(0xff79c495),
-          currentIndex: myCurrentIndex,
-          backgroundColor: Color(0xff03211a),
-          onTap: (index){
-            setState(() {
-              myCurrentIndex=index;
-            });
-          },
-          items: const[
-            BottomNavigationBarItem(icon: Icon(Icons.map_outlined),label:"Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite),label:"My Maps"),
-            BottomNavigationBarItem(icon: Icon(Icons.person),label:"Profile"),
-            BottomNavigationBarItem(icon: Icon(Icons.settings),label:"Settings"),
-          ],
-        ),
+      body: IndexedStack(
+        index: bottomNavIndex,
+        children: _widgetOptions(),
       ),
-    ),
-      body: pages[myCurrentIndex],
+      bottomNavigationBar: AnimatedBottomNavigationBar(
+          backgroundColor: Color(0xff519476),
+          splashColor: Color(0xff93c9c8),
+          activeColor: Color(0xff93c9c8),
+          inactiveColor: Colors.black.withOpacity(.5),
+          icons: iconList,
+          activeIndex: bottomNavIndex,
+          notchSmoothness: NotchSmoothness.softEdge,
+          gapLocation: GapLocation.none,
+          onTap: (index) {
+            setState(() {
+              bottomNavIndex = index;
+              final List<trail> favoritedTrails = trail.getFavoriteTrails();
+              favorites = favoritedTrails;
+            });
+          }),
     );
   }
 }
