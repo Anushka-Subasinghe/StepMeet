@@ -1,208 +1,247 @@
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:final_project1/Screens/trails_screen.dart';
-import 'package:final_project1/reusable_widgets/list.dart';
+import 'package:final_project1/Models/Map_list.dart';
+import 'package:final_project1/Screens/SearchScreen.dart';
+
+import 'map_screen.dart';
+
 class ExploreScreen extends StatefulWidget {
+
   const ExploreScreen({Key?key}):super(key:key);
   @override
+
   _ExploreScreenState createState()=>_ExploreScreenState();
 }
 class _ExploreScreenState extends State<ExploreScreen> {
-  List types =[
-    {
-      "image":'assets/images/Mynydd-Gelliwion.jpg',
-      "name":"Mynydd Gelliwion Walk",
-      "level":"Recommended",
-    },
-    {
-      "image":"assets/images/CwmClydachWaterfall.jpg",
-      "name":"Cwm Clydach Lake Walk",
-      "level":"Recommended",
-    },
-    {
-      "image":"assets/images/DarranParkLake.jpg",
-      "name":"Darran Park Circular walk",
-      "level":"Recommended",
-    },
-    {
-      "image":"assets/images/Maerdy Reservoir Walk.jpg",
-      "name":"Maerdy Reservoir Walk",
-      "level":"Recommended",
-    },
-    {
-      "image":"assets/images/cwm-clydach.jpg",
-      "name":"Clydach Vale Circular Walk",
-      "level":"Recommended",
-    },
-
-  ];
-
   @override
   Widget build(BuildContext) {
-    Size size = MediaQuery.of(context).size;
+    int selectedIndex = 0;
+    Size size = MediaQuery
+        .of(context)
+        .size;
+    List<trail> _trailList = trail.trailList;
+    bool toggleIsFavorite(bool isFavorite) {
+      return !isFavorite;
+    }
+    void onTrailCompleted(String trailName) {
+      // Your implementation here
+    }
     return Scaffold(
-      body: Container(
-        child: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          top: 64.0,
-          bottom: 0.0,
-          left: 32.0,
-          right: 32.0,
-        ),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 24.0),
-            Text(
-              "Explore Walking Paths and Trails in Wales!",
-              style: TextStyle(
-                fontSize: 30.0,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 24.0),
-                Container(
-                  child: TextField(
-                    cursorColor: Colors.white,
-                    style: TextStyle(color:Colors.white.withOpacity(0.9)),
-                    decoration: InputDecoration(
-                      hintText: "Search a trail ...",
-                      hintStyle: TextStyle(
-                        fontSize: 20.0,color: Colors.white.withOpacity(0.9),
-                      ),
-                      prefixIcon: Icon(Icons.search, color: Colors.white.withOpacity(0.9),size:34.0,),
-                      labelStyle: TextStyle(color:Colors.white.withOpacity(0.9)),
-                      filled: true,
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      fillColor: Color(0xffade0d2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                        borderSide: const BorderSide(width:0,style:BorderStyle.none),
-                      ),
-                    ),
-                  ),
+            Stack(
+              children: [
+                Image.asset('assets/images/get started.jpg',
+                  height: 850,
+                  width: size.width,
+                  fit: BoxFit.cover,
                 ),
-            SizedBox(height: 28.0),
+                Container(
+                  height: 850.0,
+                  width: size.width,
+                  color: Colors.black.withOpacity(0.8),
+                ),
             Container(
-              height: 450.0,
-              child:ListView.builder(
-                scrollDirection: Axis.horizontal,
-                   itemCount: types.length,
-                  itemBuilder: (context,index) {
-                  return GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context)=>TrailsScreen(
-                        index,
-                            trails[index]["image"],
-                            trails[index]["name"],
-                            trails[index]["start"],
-                            trails[index]["length"]
-                          ),
-                      ),
-                    ),
-                  child: Stack(
+              child: SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                top: 64.0,
+                bottom: 0.0,
+                left: 32.0,
+                right: 32.0,
+              ),
+              child: Column(
+                  children: [
+                    Row(
                       children: [
-                        Hero(
-                          tag: "trail$index",
-                          child:
-                            Container(
-                              height: 450.0,
-                              width: 250.0,
-                              margin: EdgeInsets.only(right: 24.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14.0),
-                                  image: DecorationImage(
-                                    image: AssetImage(
-                                       types[index]["image"]),
-                                    fit: BoxFit.cover,
-                                  )
-                              ),
-                            ),
+                        Text(
+                          "Explore Walking Paths",
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            color:Color(0xffc1cbbf),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                            Container(
-                              height: 450.0,
-                              width: 250.0,
-                              margin: EdgeInsets.only(right: 24.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14.0),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black12.withOpacity(0.4),
-                                  ],
-                                  stops: [
-                                    0.6,
-                                    0.9,
-                                  ],
-                                ),
-                              ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "and Trails in Wales... ",
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            color:Color(0xffc1cbbf),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          iconSize: 35,
+                          color: Color(0xffc1cbbf),
+                          icon: const Icon(Icons.search),
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context)=>SearchScreen(),
                             ),
-                            Positioned(
-                              top: 24.0,
-                              left: 24.0,
-                              child: GlassmorphicContainer(
-                                height: 32.0,
-                                width: 150.0,
-                                blur: 4.0,
-                                border: 0.0,
-                                borderRadius: 8.0,
-                                linearGradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.white.withOpacity(0.4),
-                                    Colors.white.withOpacity(0.4),
-                                  ],
-                                ),
-                                borderGradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.white.withOpacity(0.4),
-                                    Colors.white.withOpacity(0.4),
-                                  ],
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    types[index]["level"],
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 40.0),
+                    Container(
+                        height: 500.0,
+                        child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _trailList.length,
+                            itemBuilder: (context, int index) {
+                              return GestureDetector(
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context)=>TrailsScreen(
+                                      trailID: _trailList[index].trailID,
+                                      onTrailCompleted: onTrailCompleted,
                                     ),
                                   ),
                                 ),
-
-                              ),
-                            ),
-                            Positioned(
-                                bottom: 32.0,
-                                left: 24.0,
-                                child: Container(
-                                  width: size.width / 2.6,
-                                  child: Text(
-                                    types[index]["name"],
-                                    style: TextStyle(
-                                      fontSize: 28.0,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                child: Stack(
+                                  children: [
+                                    Hero(
+                                      tag: "trail$index",
+                                      child:
+                                      Container(
+                                        height: 500.0,
+                                        width: 250.0,
+                                        margin: EdgeInsets.only(right: 24.0),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(14.0),
+                                            border: Border.all(color: Colors.white38),
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  _trailList[index].imageURL),
+                                              fit: BoxFit.cover,
+                                            )
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                )
-                            )
-                          ],
-                        ),
-                  );
-                }
-            )
-            )
-          ]
+                                    Container(
+                                      height: 500.0,
+                                      width: 250.0,
+                                      margin: EdgeInsets.only(right: 24.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14.0),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Colors.black12.withOpacity(0.4),
+                                          ],
+                                          stops: [
+                                            0.6,
+                                            0.9,
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 24.0,
+                                      left: 24.0,
+                                      child: GlassmorphicContainer(
+                                        height: 32.0,
+                                        width: 150.0,
+                                        blur: 4.0,
+                                        border: 0.0,
+                                        borderRadius: 8.0,
+                                        linearGradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.white.withOpacity(0.4),
+                                            Colors.white.withOpacity(0.4),
+                                          ],
+                                        ),
+                                        borderGradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.white.withOpacity(0.4),
+                                            Colors.white.withOpacity(0.4),
+                                          ],
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            _trailList[index].level,
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+        
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 10,
+                                      right: 30,
+                                      child: Container(
+                                        height: 45,
+                                        width: 45,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(25),
+                                          color: Colors.white38.withOpacity(0.8),
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              bool isFavorite = toggleIsFavorite(
+                                                  _trailList[index]
+                                                      .isfavorite);
+                                              _trailList[index].isfavorite =
+                                                  isFavorite;
+                                            });
+                                          },
+                                          icon: Icon(
+                                            _trailList[index].isfavorite == true
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color:Color(0xff447a38),
+                                          ),
+                                          iconSize: 30,
+                                        ),
+        
+                                      ),
+                                    ),
+                                    Positioned(
+                                        bottom: 32.0,
+                                        left: 24.0,
+                                        child: Container(
+                                          width: size.width / 2.6,
+                                          child: Text(
+                                            _trailList[index].name,
+                                            style: TextStyle(
+                                              fontSize: 28.0,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        )
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                        )
+                    ),
+            ]
+                ),
+                ),
+            ),
+              ],
+            ),
+          ],
         ),
-      ),
       ),
     );
   }

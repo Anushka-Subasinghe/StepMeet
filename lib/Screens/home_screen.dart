@@ -1,7 +1,6 @@
+import 'package:final_project1/Screens/share_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project1/Screens/explore_screen.dart';
-import 'package:final_project1/reusable_widgets/list.dart';
-
 import 'navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,11 +14,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        ),
     body:Column(
         children: [
     Stack(

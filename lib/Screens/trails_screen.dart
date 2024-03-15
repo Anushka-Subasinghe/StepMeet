@@ -1,34 +1,41 @@
+import 'package:final_project1/Models/Map_list.dart';
+import 'package:final_project1/Screens/explore_screen.dart';
+import 'package:final_project1/Screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:final_project1/Screens/map_screen.dart';
-import 'package:final_project1/reusable_widgets/list.dart';
+import 'package:final_project1/Models/Map_list.dart';
 
 class TrailsScreen extends StatefulWidget {
+  final int trailID;
+  final Function(String) onTrailCompleted; // Callback function
 
-  final int index;
-  final String image,name,start,length;
-  TrailsScreen(this.index,this.image,this.name,this.start,this.length);
+  const TrailsScreen({Key? key, required this.trailID, required this.onTrailCompleted}) : super(key: key);
 
   @override
-  _TrailsScreenState createState()=>_TrailsScreenState();
+  State<TrailsScreen> createState() => _TrailsScreenState();
 }
-
 class _TrailsScreenState extends State<TrailsScreen> {
+  //Toggle Favorite button
+  bool toggleIsFavorite(bool isFavorite) {
+    return !isFavorite;
+  }
+
   @override
   Widget build(BuildContext) {
     Size size=MediaQuery.of(context).size;
+    int selectedIndex=0;
+    List<trail> _trailList =trail.trailList;
+
     return Scaffold(
       body: Stack(
         children:[
-        Hero(
-            tag:"park${widget.index}",
-            child: Image.asset(
-                widget.image,
-                height:size.height,
-                width:size.width,
-                fit:BoxFit.cover,
-            ),
-         ),
+          Image.asset(
+              _trailList[widget.trailID].imageURL,
+              height:size.height,
+              width:size.width,
+              fit:BoxFit.cover,
+          ),
           Container(
             height: size.height,
             width: size.width,
@@ -69,11 +76,13 @@ class _TrailsScreenState extends State<TrailsScreen> {
                 vertical: 16.0,
                 horizontal: 28.0,
               ),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Text(
-                    widget.name,
+                   _trailList[widget.trailID].name,
                     style: TextStyle(
                       fontSize: 30.0,
                       color: Colors.white,
@@ -94,7 +103,7 @@ class _TrailsScreenState extends State<TrailsScreen> {
                   Container(
                     width: size.width/1.1,
                     child:Text(
-                      widget.start,
+                      _trailList[widget.trailID].start,
                       style: TextStyle(
                         fontSize: 21.0,
                         color: Colors.white70,
@@ -111,7 +120,7 @@ class _TrailsScreenState extends State<TrailsScreen> {
                     ),
                   ),
                   Text(
-                    widget.length,
+                    _trailList[widget.trailID].length,
                     style: TextStyle(
                       fontSize: 18.0,
                       color: Colors.white70,
@@ -127,18 +136,43 @@ class _TrailsScreenState extends State<TrailsScreen> {
               child:Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children:[
-                  mapViewButton(context,(){}),
+                  mapViewButton(context,widget.trailID,widget.onTrailCompleted),
                   SizedBox(height: 50.0),
                 ],
               ),
             ),
+          Positioned(
+            top: 58,
+            right: 28,
+            child: Container(
+            height: 45,
+            width: 45,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              color: Colors.white.withOpacity(0.8),
+            ),
+            child: IconButton(
+              onPressed: () {
+                setState(() {
+                  bool isFavorite = toggleIsFavorite(
+                      _trailList[widget.trailID].isfavorite);
+                  _trailList[widget.trailID].isfavorite = isFavorite;
+                });
+              },
+              icon: Icon(_trailList[widget.trailID].isfavorite==true? Icons.favorite: Icons.favorite_border),
+              color:Color(0xff447a38),
+              iconSize:30,
+            ),
+
+          ),
+              ),
         ]
       ),
     );
   }
   }
 
-Container mapViewButton(BuildContext context,Function onTap) {
+Container mapViewButton(BuildContext context,int trailID,Function(String) onTrailCompleted) {
   return Container(width: MediaQuery.of(context).size.width,
     height: 50,
     alignment: Alignment.center,
@@ -147,9 +181,13 @@ Container mapViewButton(BuildContext context,Function onTap) {
     child: ElevatedButton(
       onPressed: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MapScreen()));
+            MaterialPageRoute(builder: (context) => MapScreen(
+              trailID: trailID,
+              onTrailCompleted: onTrailCompleted, // Pass callback function to MapScreen
+            ),
+            ));
       },
-      child: Text("Map View",
+      child: Text("Start Journey",
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 18.0,

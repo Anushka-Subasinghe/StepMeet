@@ -5,7 +5,7 @@ import 'package:final_project1/Screens/signup_screen.dart';
 import 'package:final_project1/Screens/signin_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key?key}):super(key:key);
+  const WelcomeScreen({Key?key, required String title}):super(key:key);
   @override
   _WelcomeScreenState createState()=>_WelcomeScreenState();
 }

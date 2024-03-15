@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   glassmorphism: ^3.0.0
   flutter_svg: ^2.0.9
+  animated_bottom_navigation_bar: ^0.3.3
+  page_transition: ^2.0.5
 
 
 dev_dependencies:
@@ -64,7 +66,16 @@ flutter:
     - assets/images/Maerdy Reservoir Walk.jpg
     - assets/images/cwm-clydach.jpg
     - assets/icons/left-arrow-svgrepo-com.svg
-    - assets/Maps/map.jpg
+    - assets/icons/favorite.png
+    - assets/icons/profile.png
+    - assets/Maps/1.jpg
+    - assets/Maps/2.png
+    - assets/Maps/3.png
+    - assets/Maps/4.png
+    - assets/Maps/5.png
+    - assets/Maps/6.png
+    - assets/Maps/7.png
+    - assets/Maps/8.jpg
 
 
 
