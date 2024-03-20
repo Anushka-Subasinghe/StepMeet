@@ -1,8 +1,7 @@
-import 'package:final_project1/Screens/share_screen.dart';
 import 'package:flutter/material.dart';
-import '../Models/Map_list.dart';
-import 'profile_screen.dart';
-
+import 'package:final_project1/Models/Map_list.dart';
+import 'package:final_project1/Screens/share_screen.dart';
+import 'package:final_project1/Screens/profile_screen.dart';
 
 class ObservationScreen extends StatefulWidget {
   const ObservationScreen({Key? key}) : super(key: key);
@@ -13,14 +12,12 @@ class ObservationScreen extends StatefulWidget {
 
 class _ObservationScreenState extends State<ObservationScreen> {
   final TextEditingController _textController = TextEditingController();
+  List<trail> completedTrails = trail.completedTrails;
   int selectedIndex = 0;
-  final List<List<String>> commentList = [];
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    List<trail> completedTrails = trail.completedTrails;
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -141,6 +138,14 @@ class _ObservationScreenState extends State<ObservationScreen> {
     );
   }
 
+  void addCommentToCompletedTrail(BuildContext context) {
+    String observation = _textController.text.trim();
+    trail completedTrail = trail.completedTrails.last; // Get the last completed trail
+    trail.addCommentToCompletedTrail(observation, completedTrail);
+    _textController.clear();
+    setState(() {});
+  }
+
   Container CommentButton(BuildContext context) {
     return Container(
       height: 40,
@@ -149,13 +154,7 @@ class _ObservationScreenState extends State<ObservationScreen> {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(90)),
       child: ElevatedButton(
         onPressed: () {
-          String observation = _textController.text.trim();
-          String trailName = trail.completedTrails[selectedIndex].name;
-          List<String> comment = [trailName, observation];
-          commentList.add(comment);
-          _textController.clear();
-          printComments();
-          setState(() {});
+          addCommentToCompletedTrail(context); // Call the method to add comment
         },
         child: Text(
           "Share Comment",
@@ -179,12 +178,5 @@ class _ObservationScreenState extends State<ObservationScreen> {
         ),
       ),
     );
-  }
-
-  void printComments() {
-    print("Comment List:");
-    for (var comment in commentList) {
-      print("Trail: ${comment[0]}, Comment: ${comment[1]}");
-    }
   }
 }

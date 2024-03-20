@@ -65,6 +65,13 @@ flutter:
     - assets/images/DarranParkLake.jpg
     - assets/images/Maerdy Reservoir Walk.jpg
     - assets/images/cwm-clydach.jpg
+    - assets/images/cwm ystwyth.jpg
+    - assets/images/bwlch-y-clawdd.jpg
+    - assets/images/Blaencwm Lower Level Walk.jpg
+    - assets/images/Cwmparc Pathway of Hope.jpg
+    - assets/images/Gilfach Goch Windfarm Walk.jpg
+    - assets/images/Glyncornel Nature Reserve.jpg
+    - assets/images/ty'n y bedw.jpg
     - assets/icons/left-arrow-svgrepo-com.svg
     - assets/icons/favorite.png
     - assets/icons/profile.png
@@ -75,7 +82,11 @@ flutter:
     - assets/Maps/5.png
     - assets/Maps/6.png
     - assets/Maps/7.png
-    - assets/Maps/8.jpg
+    - assets/Maps/8.png
+    - assets/Maps/9.png
+    - assets/Maps/10.png
+    - assets/Maps/11.png
+    - assets/Maps/12.png
 
 
 

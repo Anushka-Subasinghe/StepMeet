@@ -28,10 +28,10 @@ class TrailWidget extends StatelessWidget {
 
       child: Container(
         decoration: BoxDecoration(
-          color:Color(0xff579678).withOpacity(.5),
+          color:Color(0xff579678).withOpacity(.6),
           borderRadius: BorderRadius.circular(10),
         ),
-        height: 60.0,
+        height: 80.0,
         padding: const EdgeInsets.only(left: 10, top: 10),
         margin: const EdgeInsets.only(bottom: 10, top: 0),
         width: size.width,
@@ -66,13 +66,13 @@ class TrailWidget extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: Colors.black,
+                          color: Color(0xff1c1b1b),
                         ),
                       ),
                       Text(trailList[index].length,
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Color(0xff1e1d1d),
                         ),),
                     ],
                   ),

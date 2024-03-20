@@ -17,6 +17,7 @@ class NavigationScreen extends StatefulWidget {
 class _NavigationScreenState extends State<NavigationScreen> {
   int bottomNavIndex = 0;
   List<trail> favorites = [];
+  //List<List<String>> commentList = [];
 
   List<Widget> _widgetOptions() {
     return [

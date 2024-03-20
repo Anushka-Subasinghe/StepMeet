@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/setting_screens/account_settings.dart';
 import 'package:final_project1/Screens/settings_screen.dart';
-import 'package:flutter/material.dart';
-
-import '../Models/Map_list.dart';
 import '../reusable_widgets/trail_widget.dart';
+import '../reusable_widgets/comment_widget.dart'; // Import the CommentWidget
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -19,6 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Size size = MediaQuery.of(context).size;
     List<trail> _trailList = trail.trailList;
     List<trail> completedTrails = trail.completedTrails;
+    List<String> completedTrailComments = trail.completedTrailComments;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -142,6 +143,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20.0,
                               ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            height: size.height * 0.25,
+                            child: ListView.builder(
+                              itemCount: completedTrailComments.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: CommentWidget(comment: completedTrailComments[index]),
+                                );
+                              },
                             ),
                           ),
                           SizedBox(
