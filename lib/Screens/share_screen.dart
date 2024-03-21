@@ -1,11 +1,8 @@
-import 'package:final_project1/Screens/profile_screen.dart';
-import 'package:final_project1/Screens/settings_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'Observations_screen.dart';
 import 'SearchScreen.dart';
-import 'explore_screen.dart';
-import 'map_screen.dart';
 import 'navigation_bar.dart';
 
 class ShareScreen extends StatefulWidget {

@@ -154,7 +154,7 @@ class _ObservationScreenState extends State<ObservationScreen> {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(90)),
       child: ElevatedButton(
         onPressed: () {
-          addCommentToCompletedTrail(context); // Call the method to add comment
+          addCommentToCompletedTrail(context);
         },
         child: Text(
           "Share Comment",

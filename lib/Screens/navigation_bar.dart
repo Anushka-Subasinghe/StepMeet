@@ -1,7 +1,8 @@
-import 'package:final_project1/Screens/SearchScreen.dart';
+import 'package:final_project1/Models/user_list.dart';
 import 'package:final_project1/Screens/explore_screen.dart';
 import 'package:final_project1/Screens/favorites_screen.dart';
 import 'package:final_project1/Screens/profile_screen.dart';
+import 'package:final_project1/Screens/searchUsers.dart';
 import 'package:final_project1/Screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/Map_list.dart';
@@ -17,14 +18,14 @@ class NavigationScreen extends StatefulWidget {
 class _NavigationScreenState extends State<NavigationScreen> {
   int bottomNavIndex = 0;
   List<trail> favorites = [];
-  //List<List<String>> commentList = [];
+  List<user> followed = [];
 
   List<Widget> _widgetOptions() {
     return [
       const ExploreScreen(),
       FavoritesScreen(favoriteTrails: favorites),
       ProfileScreen(),
-      CommunityScreen(),
+      SearchUsersScreen(),
       SettingsScreen(),
     ];
   }

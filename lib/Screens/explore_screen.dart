@@ -25,7 +25,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       return !isFavorite;
     }
     void onTrailCompleted(String trailName) {
-      // Your implementation here
+
     }
     return Scaffold(
       body: SingleChildScrollView(
@@ -53,7 +53,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ),
               child: Column(
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Text(
                           "Explore Walking Paths",
@@ -67,7 +67,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     ),
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           "and Trails in Wales... ",
                           style: TextStyle(
                             fontSize: 30.0,
@@ -77,17 +77,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         ),
                         IconButton(
                           iconSize: 35,
-                          color: Color(0xffc1cbbf),
+                          color: const Color(0xffc1cbbf),
                           icon: const Icon(Icons.search),
                           onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context)=>SearchScreen(),
+                              builder: (context)=>const SearchScreen(),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 40.0),
+                    const SizedBox(height: 40.0),
                     Container(
                         height: 500.0,
                         child: ListView.builder(
@@ -111,7 +111,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                       Container(
                                         height: 500.0,
                                         width: 250.0,
-                                        margin: EdgeInsets.only(right: 24.0),
+                                        margin: const EdgeInsets.only(right: 24.0),
                                         decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(14.0),
                                             border: Border.all(color: Colors.white38),
@@ -126,7 +126,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     Container(
                                       height: 500.0,
                                       width: 250.0,
-                                      margin: EdgeInsets.only(right: 24.0),
+                                      margin: const EdgeInsets.only(right: 24.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(14.0),
                                         gradient: LinearGradient(
@@ -136,7 +136,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                             Colors.transparent,
                                             Colors.black12.withOpacity(0.4),
                                           ],
-                                          stops: [
+                                          stops: const [
                                             0.6,
                                             0.9,
                                           ],
@@ -172,7 +172,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                           alignment: Alignment.center,
                                           child: Text(
                                             _trailList[index].level,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 18.0,
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -206,7 +206,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                             _trailList[index].isfavorite == true
                                                 ? Icons.favorite
                                                 : Icons.favorite_border,
-                                            color:Color(0xff447a38),
+                                            color:const Color(0xff447a38),
                                           ),
                                           iconSize: 30,
                                         ),
@@ -220,7 +220,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                           width: size.width / 2.6,
                                           child: Text(
                                             _trailList[index].name,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 28.0,
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,

@@ -1,19 +1,30 @@
+import 'dart:typed_data';
+
+import 'package:final_project1/Screens/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/setting_screens/account_settings.dart';
 import 'package:final_project1/Screens/settings_screen.dart';
 import '../reusable_widgets/trail_widget.dart';
-import '../reusable_widgets/comment_widget.dart'; // Import the CommentWidget
+import '../reusable_widgets/comment_widget.dart';
+import 'following_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  final Uint8List? imageData;
+  const ProfileScreen({Key? key,this.imageData}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
-
 class _ProfileScreenState extends State<ProfileScreen> {
+  Uint8List? _image;
+
   @override
+  void initState() {
+    super.initState();
+    _image = widget.imageData;
+  }
+
   Widget build(BuildContext context) {
     int selectedIndex = 0;
     Size size = MediaQuery.of(context).size;
@@ -40,10 +51,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               iconSize: 30,
               color: Color(0xffd6e1da),
-              icon: const Icon(Icons.edit),
+              icon: const Icon(Icons.explore),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => AccountScreen(),
+                  builder: (context) => NavigationScreen(),
                 ),
               ),
             ),
@@ -68,22 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: size.width,
                   color: Colors.black.withOpacity(0.8),
                 ),
-                Positioned(
-                  top: 90,
-                  left: 155,
-                  child: Container(
-                    width: 90.0,
-                    height: 90.0,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage('assets/icons/profile.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
+
                 Container(
                   padding: EdgeInsets.only(
                     top: 170.0,
@@ -191,6 +187,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
+                _image != null ?
+                Positioned(
+                  top: 90,
+                  left:155,
+                  child: Container(
+                    width: 90.0,
+                    height: 90.0,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: MemoryImage(_image!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                )
+                    :
+                Positioned(
+                  top: 90,
+                  left:155,
+                  child: Container(
+                    width: 90.0,
+                    height: 90.0,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: AssetImage('assets/icons/profile.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+
               ],
             ),
           ],
