@@ -17,7 +17,9 @@ class _ObservationScreenState extends State<ObservationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -30,18 +32,20 @@ class _ObservationScreenState extends State<ObservationScreen> {
               iconSize: 30,
               color: Color(0xffd6e1da),
               icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ShareScreen(),
-                ),
-              ),
+              onPressed: () =>
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ShareScreen(),
+                    ),
+                  ),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(),
-                ),
-              ),
+              onPressed: () =>
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(),
+                    ),
+                  ),
               child: Text(
                 "Skip",
                 style: TextStyle(
@@ -80,7 +84,8 @@ class _ObservationScreenState extends State<ObservationScreen> {
                   color: Colors.black.withOpacity(0.6),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 150.0, left: 80, right: 60),
+                  padding: const EdgeInsets.only(
+                      top: 150.0, left: 80, right: 60),
                   child: Container(
                     child: Text(
                       "Share your experience \n with the StepMeet \nCommunity.",
@@ -117,7 +122,8 @@ class _ObservationScreenState extends State<ObservationScreen> {
                             fontSize: 20.0,
                             color: Colors.white.withOpacity(0.9),
                           ),
-                          labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
+                          labelStyle: TextStyle(color: Colors.white.withOpacity(
+                              0.9)),
                           floatingLabelBehavior: FloatingLabelBehavior.never,
                         ),
                       ),
@@ -138,14 +144,6 @@ class _ObservationScreenState extends State<ObservationScreen> {
     );
   }
 
-  void addCommentToCompletedTrail(BuildContext context) {
-    String observation = _textController.text.trim();
-    trail completedTrail = trail.completedTrails.last; // Get the last completed trail
-    trail.addCommentToCompletedTrail(observation, completedTrail);
-    _textController.clear();
-    setState(() {});
-  }
-
   Container CommentButton(BuildContext context) {
     return Container(
       height: 40,
@@ -153,9 +151,7 @@ class _ObservationScreenState extends State<ObservationScreen> {
       margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(90)),
       child: ElevatedButton(
-        onPressed: () {
-          addCommentToCompletedTrail(context);
-        },
+        onPressed: () => _showConfirmationDialog(context),
         child: Text(
           "Share Comment",
           textAlign: TextAlign.center,
@@ -179,4 +175,66 @@ class _ObservationScreenState extends State<ObservationScreen> {
       ),
     );
   }
+
+  Future<void> _showConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to share this comment?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                addCommentToCompletedTrail(
+                    context); // Proceed with adding comment
+              },
+            ),
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void addCommentToCompletedTrail(BuildContext context) {
+    String observation = _textController.text.trim();
+    trail completedTrail = trail.completedTrails.last; // Get the last completed trail
+    trail.addCommentToCompletedTrail(observation, completedTrail);
+    _textController.clear();
+    setState(() {});
+
+    // Show dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Comment Added"),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

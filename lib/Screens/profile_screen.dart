@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:final_project1/Screens/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/Map_list.dart';
