@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:final_project1/Screens/navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:final_project1/Screens/navigation_bar.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/setting_screens/account_settings.dart';
 import 'package:final_project1/Screens/settings_screen.dart';
@@ -148,7 +148,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               itemBuilder: (BuildContext context, int index) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: CommentWidget(comment: completedTrailComments[index]),
+                                  child: CommentWidget(
+                                    comment: completedTrailComments[index],
+                                    onDelete: () {
+                                      setState(() {
+                                        completedTrailComments.removeAt(index);
+                                      });
+                                    },
+                                  ),
                                 );
                               },
                             ),
