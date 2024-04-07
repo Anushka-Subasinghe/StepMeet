@@ -44,16 +44,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(
                 color: Color(0xffd6e1da),
                 fontWeight: FontWeight.w500,
-                fontSize: 30,
+                fontSize: 26,
               ),
             ),
             IconButton(
               iconSize: 30,
               color: Color(0xffd6e1da),
-              icon: const Icon(Icons.explore),
+              icon: const Icon(Icons.edit),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => NavigationScreen(),
+                  builder: (context) => AccountScreen(),
                 ),
               ),
             ),

@@ -36,13 +36,11 @@ class _AccountScreenState extends State<AccountScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "  Account Settings",
-              style: TextStyle(
-                color: Color(0xffd6e1da),
-                fontWeight: FontWeight.w500,
-                fontSize: 30,
-              ),
+            IconButton(
+              iconSize: 30,
+              color: Color(0xffcae5e5),
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
         ),

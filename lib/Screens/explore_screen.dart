@@ -3,8 +3,6 @@ import 'package:glassmorphism/glassmorphism.dart';
 import 'package:final_project1/Screens/trails_screen.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/SearchScreen.dart';
-import 'package:final_project1/Screens/map_screen.dart';
-import 'package:geolocator/geolocator.dart'; // Import the geolocator package
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -14,22 +12,6 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  late Position _currentPosition; // Variable to hold the user's live location
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation(); // Get the user's current location when the widget initializes
-  }
-
-  // Function to get the user's current location
-  void _getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    setState(() {
-      _currentPosition = position;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -260,50 +242,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ),
             ],
           ),
-        ),
-        // Button to show user's live location
-        floatingActionButton: FloatingActionButton(
-        onPressed: () {
-      if (_currentPosition != null) {
-        // Show the user's latitude and longitude as text
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Your Live Location'),
-            content: Text(
-              'Latitude: ${_currentPosition.latitude}\nLongitude: ${_currentPosition.longitude}',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      } else {
-        // Show a message if user's location is not available
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Location Error'),
-            content: Text('Unable to fetch your current location.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-        },
-          tooltip: 'Show Live Location',
-          child: Icon(Icons.location_on),
         ),
     );
   }

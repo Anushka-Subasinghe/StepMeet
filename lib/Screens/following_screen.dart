@@ -24,10 +24,16 @@ class _FollowingScreenState extends State<FollowingScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            IconButton(
+              iconSize: 30,
+              color: Color(0xffe2f8f8),
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
             Text("  Following", style: TextStyle(
               color: Color(0xffd6e1da),
               fontWeight: FontWeight.w500,
-              fontSize: 30,
+              fontSize: 26,
             ),),
             IconButton(
               iconSize: 30,
