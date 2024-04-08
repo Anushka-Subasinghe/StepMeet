@@ -25,13 +25,9 @@ class _InfoScreenState extends State<InfoScreen> {
           children: [
             IconButton(
               iconSize: 30,
-              color: Color(0xffd6e1da),
+              color: Color(0xffcae5e5),
               icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context)=>SettingsScreen(),
-                ),
-              ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
         ),
@@ -67,12 +63,37 @@ class _InfoScreenState extends State<InfoScreen> {
                         borderRadius: BorderRadius.circular(14.0),
                         color: Color(0xffede4f3).withOpacity(0.5),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(18.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                        Text(
+                        'About StepMeet',
+                        style: TextStyle(
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
+                      SizedBox(height: 10),
+                       const Padding(
+                        padding: EdgeInsets.all(18.0),
+                          child: Center(
+                            child: Text(
+                              'Welcome to StepMeet, a project created as part of my final year project at University of South Wales. This app serves as a platform for discovering walking trails in Wales and connecting with fellow outdoor enthusiasts. While this project may be a culmination of my academic journey, StepMeet is designed to help you discover and navigate scenic routes, share your experiences with others, and foster a vibrant community of outdoor adventurers. With user privacy at the forefront, StepMeet ensure that your personal data is securely managed and protected. As I continue to refine and enhance this app, I appreciate your support and feedback. Thank you for being a part of this project, and I hope you enjoy exploring the trails!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ]
+                     ),
                   ),
-
+                  ),
                 ],
               ),
             ]

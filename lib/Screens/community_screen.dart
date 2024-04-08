@@ -1,7 +1,6 @@
 import 'package:final_project1/Screens/following_screen.dart';
 import 'package:final_project1/Screens/searchUsers.dart';
 import 'package:flutter/material.dart';
-
 import '../Models/Map_list.dart';
 import '../Models/user_list.dart';
 

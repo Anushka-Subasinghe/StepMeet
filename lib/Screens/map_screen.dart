@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/share_screen.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapScreen extends StatefulWidget {
   final int trailID;
@@ -13,13 +16,54 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  int selectedIndex=0;
+  int selectedIndex = 0;
   List<trail> _trailList = trail.trailList;
   List<String> completedTrailNames = [];
+  late String lat;
+  late String long;
+  String locationMessage = 'Location';
+
+  Future<void> _getCurrentLocationAndOpenMap() async {
+    if (await Permission.location.isGranted) {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        lat = '${position.latitude}';
+        long = '${position.longitude}';
+        setState(() {
+          locationMessage = 'Latitude: $lat, Longitude: $long';
+        });
+        _openMap(lat, long);
+      } catch (e) {
+        print('Error: $e');
+        setState(() {
+          locationMessage = 'Error getting location';
+        });
+      }
+    } else {
+      // If permissions are not granted, request them
+      await Permission.location.request();
+    }
+  }
+
+  Future<void> _openMap(String lat, String long) async {
+    final String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$lat,$long';
+
+    // Check if the url_launcher plugin is available and if we can launch the URL.
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      // Handles the case where the URL can't be launched.
+      throw 'Could not launch $googleUrl';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -60,10 +104,21 @@ class _MapScreenState extends State<MapScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, right: 50, left: 50),
+                    padding: const EdgeInsets.only(
+                        top: 20, right: 50, left: 50),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Positioned(
+                          right: 5,
+                          bottom: 50,
+                          child: IconButton(
+                            iconSize: 50,
+                            color: Color(0xff750e0e),
+                            icon: const Icon(Icons.location_on),
+                            onPressed: _getCurrentLocationAndOpenMap,
+                          ),
+                        ),
                         Column(
                           children: [
                             Text(
@@ -107,6 +162,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   SizedBox(height: 20),
                   EndJourneyButton(context),
+
                 ],
               ),
             ),
@@ -115,15 +171,19 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
+
   Widget EndJourneyButton(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       height: 50,
       alignment: Alignment.center,
-      //margin: const EdgeInsets.fromLTRB(20, 10, 20, 20),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(90)),
-      child:ElevatedButton(
-        onPressed: () => endJourney(context), // Call endJourney method with context
+      child: ElevatedButton(
+        onPressed: () => _showConfirmationDialog(context),
+        // Call confirmation dialog
         child: Text(
           "End Journey",
           textAlign: TextAlign.center,
@@ -144,7 +204,40 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ),
       ),
+    );
+  }
 
+  Future<void> _showConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('End Journey'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to end this journey?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                endJourney(context); // Proceed with endJourney
+              },
+            ),
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -153,7 +246,8 @@ class _MapScreenState extends State<MapScreen> {
       completedTrailNames.add(_trailList[widget.trailID].name);
       trail.addCompletedTrail(_trailList[widget.trailID]);
     });
-    widget.onTrailCompleted(_trailList[widget.trailID].name); // Callback function
+    widget.onTrailCompleted(
+        _trailList[widget.trailID].name); // Callback function
 
     // Navigate to the ShareScreen
     Navigator.of(context).push(
@@ -163,3 +257,4 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 }
+

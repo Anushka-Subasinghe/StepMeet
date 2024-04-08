@@ -24,14 +24,8 @@ class _ShareScreenState extends State< ShareScreen > {
         leading: null,
         automaticallyImplyLeading: false,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            IconButton(
-              iconSize: 30,
-              color: Color(0xffd6e1da),
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: ()=>Navigator.of(context).pop(),
-            ),
             ElevatedButton(onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context)=>NavigationScreen(),

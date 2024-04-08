@@ -88,13 +88,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>{
         const Text("Welcome to \n StepMeet!",
         style: const TextStyle(
             color: Colors.black,fontSize: 40,fontWeight: FontWeight.bold,
-          //shadows: [
-          //Shadow(
-            //color: Colors.white,      // Choose the color of the shadow
-           // blurRadius: 1.0,          // Adjust the blur radius for the shadow effect
-            //offset: Offset(2.0, 2.0), // Set the horizontal and vertical offset for the shadow
-         // ),
-        //],
         )
     ),
 

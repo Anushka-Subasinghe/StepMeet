@@ -209,7 +209,7 @@ class trail{
      completedTrails.add(completedTrail);
   }
   static void addCommentToCompletedTrail(String comment, trail completedTrail) {
-    String combinedString = "${completedTrail.name}: $comment";
+    String combinedString = "${completedTrail.name}:  $comment";
     completedTrail.hasCommented = true; // Set hasCommented to true
     completedTrailComments.add(combinedString); // Add combined string to the list
 

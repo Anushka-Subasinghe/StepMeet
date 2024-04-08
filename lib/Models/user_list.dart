@@ -31,7 +31,7 @@ class user{
       userID: 1,
       userName: "Henry",
       email:"henry@gmail.com",
-      isPrivate: false,
+      isPrivate: true,
       dpURL :"assets/images/CwmClydachWaterfall.jpg",
       hasFollowed : false,
 

@@ -1,7 +1,6 @@
 import 'dart:typed_data';
-
-import 'package:final_project1/Screens/navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:final_project1/Screens/navigation_bar.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/setting_screens/account_settings.dart';
 import 'package:final_project1/Screens/settings_screen.dart';
@@ -45,16 +44,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(
                 color: Color(0xffd6e1da),
                 fontWeight: FontWeight.w500,
-                fontSize: 30,
+                fontSize: 26,
               ),
             ),
             IconButton(
               iconSize: 30,
               color: Color(0xffd6e1da),
-              icon: const Icon(Icons.explore),
+              icon: const Icon(Icons.edit),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => NavigationScreen(),
+                  builder: (context) => AccountScreen(),
                 ),
               ),
             ),
@@ -149,7 +148,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               itemBuilder: (BuildContext context, int index) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: CommentWidget(comment: completedTrailComments[index]),
+                                  child: CommentWidget(
+                                    comment: completedTrailComments[index],
+                                    onDelete: () {
+                                      setState(() {
+                                        completedTrailComments.removeAt(index);
+                                      });
+                                    },
+                                  ),
                                 );
                               },
                             ),

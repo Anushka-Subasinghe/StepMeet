@@ -56,11 +56,12 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Search", style: TextStyle(
-              color: Color(0xff2d3a33),
-              fontWeight: FontWeight.w500,
-              fontSize: 0,
-            ),),
+             IconButton(
+              iconSize: 30,
+              color: Color(0xffddf6f6),
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
             IconButton(
               iconSize: 30,
               color: Color(0xffd1e3da),

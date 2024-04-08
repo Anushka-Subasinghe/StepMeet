@@ -11,6 +11,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 
 class NavigationScreen extends StatefulWidget {
   NavigationScreen({Key? key}) : super(key: key);
+
   @override
   _NavigationScreenState createState() => _NavigationScreenState();
 }
@@ -20,13 +21,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
   List<trail> favorites = [];
   List<user> followed = [];
 
-  List<Widget> _widgetOptions() {
+  List<Widget> _screens() {
     return [
       const ExploreScreen(),
       FavoritesScreen(favoriteTrails: favorites),
-      ProfileScreen(),
-      SearchUsersScreen(),
-      SettingsScreen(),
+      const ProfileScreen(),
+      const SearchUsersScreen(),
+      const SettingsScreen(),
     ];
   }
 
@@ -51,26 +52,31 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: bottomNavIndex,
-        children: _widgetOptions(),
+      body: Builder(
+        builder: (BuildContext context) {
+          return IndexedStack(
+            index: bottomNavIndex,
+            children: _screens(),
+          );
+        },
       ),
       bottomNavigationBar: AnimatedBottomNavigationBar(
-          backgroundColor: Color(0xff519476),
-          splashColor: Color(0xff93c9c8),
-          activeColor: Color(0xff93c9c8),
-          inactiveColor: Colors.black.withOpacity(.5),
-          icons: iconList,
-          activeIndex: bottomNavIndex,
-          notchSmoothness: NotchSmoothness.softEdge,
-          gapLocation: GapLocation.none,
-          onTap: (index) {
-            setState(() {
-              bottomNavIndex = index;
-              final List<trail> favoritedTrails = trail.getFavoriteTrails();
-              favorites = favoritedTrails;
-            });
-          }),
+        backgroundColor: Color(0xff519476),
+        splashColor: Color(0xff93c9c8),
+        activeColor: Color(0xff93c9c8),
+        inactiveColor: Colors.black.withOpacity(.5),
+        icons: iconList,
+        activeIndex: bottomNavIndex,
+        notchSmoothness: NotchSmoothness.softEdge,
+        gapLocation: GapLocation.none,
+        onTap: (index) {
+          setState(() {
+            bottomNavIndex = index;
+            final List<trail> favoritedTrails = trail.getFavoriteTrails();
+            favorites = favoritedTrails;
+          });
+        },
+      ),
     );
   }
 }
