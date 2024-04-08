@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "450293350174",
+    "project_id": "stepmeet-8ed5d",
+    "storage_bucket": "stepmeet-8ed5d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:450293350174:android:14679d24623adff49f930f",
+        "android_client_info": {
+          "package_name": "com.example.final_project1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz_txhHE4AKenknZcphkhLnpZOavvJH80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
