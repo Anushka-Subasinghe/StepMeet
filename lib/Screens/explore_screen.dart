@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:final_project1/Screens/trails_screen.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/SearchScreen.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -12,6 +16,67 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
+  late Map<String, dynamic> user;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserDetails(); // Call getUserDetails function when the widget is initialized
+  }
+
+  Future<void> getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      // Parse the user JSON string back to a map
+
+      user = jsonDecode(userJson);
+
+      // Now you can use the 'user' map as needed
+      print('User: $user');
+    } else {
+      print('User data not found in shared preferences');
+    }
+  }
+
+  // Add a method to call the backend API to add a trail as a favorite
+  Future<void> addFavorite(int trailID) async {
+    String encodedEmail = Uri.encodeComponent(user['email']);
+
+    final String apiUrl = 'http://10.0.2.2:5151/api/users/$encodedEmail/favorites/$trailID';
+
+    try {
+      final response = await http.post(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        // Favorite added successfully
+        // You can update the UI or show a message here if needed
+      } else {
+        // Handle other status codes if necessary
+      }
+    } catch (e) {
+      // Handle exceptions or errors
+    }
+  }
+
+  // Add a method to call the backend API to delete a trail from favorites
+  Future<void> deleteFavorite(int trailID) async {
+    String encodedEmail = Uri.encodeComponent(user['email']);
+
+    final String apiUrl = 'http://10.0.2.2:5151/api/users/$encodedEmail/favorites/$trailID';
+
+    try {
+      final response = await http.delete(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        // Favorite deleted successfully
+        // You can update the UI or show a message here if needed
+      } else {
+        // Handle other status codes if necessary
+      }
+    } catch (e) {
+      // Handle exceptions or errors
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -197,11 +262,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                           child: IconButton(
                                             onPressed: () {
                                               setState(() {
-                                                bool isFavorite = toggleIsFavorite(
-                                                    _trailList[index]
-                                                        .isfavorite);
-                                                _trailList[index].isfavorite =
-                                                    isFavorite;
+                                                bool isFavorite = toggleIsFavorite(_trailList[index].isfavorite);
+                                                _trailList[index].isfavorite = isFavorite;
+
+                                                // Call the appropriate backend API method based on the favorite status
+                                                if (isFavorite) {
+                                                  addFavorite(_trailList[index].trailID);
+                                                } else {
+                                                  deleteFavorite(_trailList[index].trailID);
+                                                }
                                               });
                                             },
                                             icon: Icon(

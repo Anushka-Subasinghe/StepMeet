@@ -1,8 +1,12 @@
 import 'package:final_project1/Screens/home_screen.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:final_project1/reusable_widgets/reusable_widget.dart';
 import 'package:final_project1/Screens/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -19,23 +23,48 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> _signIn() async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailTextController.text.trim(),
-        password: _passwordTextController.text,
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5151/api/Auth/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': _emailTextController.text.trim(),
+          'password': _passwordTextController.text,
+        }),
       );
 
-      // Navigate to HomeScreen after successful registration
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+      if (response.statusCode == 200) {
+        print(response.body);
+
+        // Parse the response body as JSON
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+        // Extract the 'user' object
+        Map<String, dynamic> user = jsonResponse['user'];
+
+        // Convert the 'user' object back to JSON
+        String userJson = jsonEncode(user);
+
+        // Save the user JSON in shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('user', userJson);
+
+        // Login successful, navigate to HomeScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        // Login failed, display error message
+        throw Exception('Failed to sign in: ${response.body}');
+      }
     } catch (e) {
       print('Failed to sign in: $e');
-      // Display error message to the user
-      // For example:
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to sign in: $e')));
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

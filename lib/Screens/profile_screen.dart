@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:final_project1/Screens/navigation_bar.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/setting_screens/account_settings.dart';
 import 'package:final_project1/Screens/settings_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../reusable_widgets/trail_widget.dart';
 import '../reusable_widgets/comment_widget.dart';
 import 'following_screen.dart';
@@ -17,11 +19,28 @@ class ProfileScreen extends StatefulWidget {
 }
 class _ProfileScreenState extends State<ProfileScreen> {
   Uint8List? _image;
+  late Map<String, dynamic> user = {};
 
   @override
   void initState() {
     super.initState();
     _image = widget.imageData;
+    getUserDetails();
+  }
+
+  Future<void> getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      // Parse the user JSON string back to a map
+      setState(() {
+        user = jsonDecode(userJson);
+      });
+      // Now you can use the 'user' map as needed
+      print('User: $user');
+    } else {
+      print('User data not found in shared preferences');
+    }
   }
 
   Widget build(BuildContext context) {
@@ -91,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 5,
                       ),
                       Text(
-                        "Username",
+                        user['firstName'] + ' ' + user['lastName'],
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xffd6e1da),
@@ -100,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Text(
-                        "user10@gmail.com",
+                        user['email'],
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xffbabdbd),

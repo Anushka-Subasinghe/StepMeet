@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/share_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class MapScreen extends StatefulWidget {
   final int trailID;
@@ -22,6 +26,28 @@ class _MapScreenState extends State<MapScreen> {
   late String lat;
   late String long;
   String locationMessage = 'Location';
+  late Map<String, dynamic> user = {};
+
+  @override
+  void initState() {
+    super.initState();
+    getUserDetails();
+  }
+
+  Future<void> getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      // Parse the user JSON string back to a map
+      setState(() {
+        user = jsonDecode(userJson);
+      });
+      // Now you can use the 'user' map as needed
+      print('User: $user');
+    } else {
+      print('User data not found in shared preferences');
+    }
+  }
 
   Future<void> _getCurrentLocationAndOpenMap() async {
     if (await Permission.location.isGranted) {
@@ -227,6 +253,17 @@ class _MapScreenState extends State<MapScreen> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 endJourney(context); // Proceed with endJourney
+                setState(() {
+                  completedTrailNames.add(_trailList[widget.trailID].name);
+                  trail.addCompletedTrail(_trailList[widget.trailID]);
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ShareScreen(),
+                    ),
+                  );
+
+                });
               },
             ),
             TextButton(
@@ -241,20 +278,33 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void endJourney(BuildContext context) {
-    setState(() {
-      completedTrailNames.add(_trailList[widget.trailID].name);
-      trail.addCompletedTrail(_trailList[widget.trailID]);
-    });
-    widget.onTrailCompleted(
-        _trailList[widget.trailID].name); // Callback function
+  Future<void> endJourney(BuildContext context) async {
+     // Callback function
 
     // Navigate to the ShareScreen
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ShareScreen(),
-      ),
-    );
+    try {
+      // Add the completed trail to the backend
+
+      String encodedEmail = Uri.encodeComponent(user['email']);
+
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5151/api/users/$encodedEmail/completed/${widget.trailID}'),
+      );
+
+      if (response.statusCode == 200) {
+        // If the server returns a 200 OK response,
+        // navigate to the ShareScreen
+        print("Recent activity added successfully");
+      } else {
+        // If the server returns an error response, throw an exception
+        throw Exception('Failed to mark trail as completed');
+      }
+    } catch (e) {
+      // Handle any errors that occurred during the HTTP request
+      print('Error: $e');
+      // Show an error dialog or toast to inform the user about the error
+    }
+
   }
 }
 

@@ -1,11 +1,11 @@
-import 'package:final_project1/Screens/setting_screens/Feedback_Screen.dart';
-import 'package:final_project1/Screens/setting_screens/about_stepmeet.dart';
-import 'package:final_project1/Screens/setting_screens/account_settings.dart';
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:final_project1/Screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/pick_image.dart';
 import 'dart:typed_data';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../profile_screen.dart';
@@ -18,12 +18,36 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   Uint8List? _image;
   bool isPrivate = false;
+  late Map<String, dynamic> user = {};
+
   void selectImage()async{
      Uint8List img = await pickImage(ImageSource.gallery);
      setState(() {
        _image = img;
      });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserDetails(); // Call getUserDetails function when the widget is initialized
+  }
+
+  Future<void> getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      // Parse the user JSON string back to a map
+      setState(() {
+        user = jsonDecode(userJson);
+      });
+      // Now you can use the 'user' map as needed
+      print('User: $user');
+    } else {
+      print('User data not found in shared preferences');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,22 +98,26 @@ class _AccountScreenState extends State<AccountScreen> {
                       SizedBox(
                         height: 5,
                       ),
-                      Text(
-                        "Username",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xffd6e1da),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
+                      Center(
+                        child: Text(
+                          user['firstName'] + ' ' + user['lastName'],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xffd6e1da),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
-                      Text(
-                        "user10@gmail.com",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xffbabdbd),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
+                      Center(
+                        child: Text(
+                          user['email'],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xffbabdbd),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                          ),
                         ),
                       ),
                     ],
@@ -342,4 +370,6 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
     );
   }
+
+
 }

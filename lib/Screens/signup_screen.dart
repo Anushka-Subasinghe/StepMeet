@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:final_project1/reusable_widgets/reusable_widget.dart';
-import 'package:final_project1/Screens/signin_screen.dart';
+import 'package:http/http.dart' as http;
 import 'package:final_project1/Screens/home_screen.dart';
+import 'package:final_project1/Screens/signin_screen.dart';
+import 'package:final_project1/reusable_widgets/reusable_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -20,32 +22,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> _register() async {
     try {
-      // Create user with email and password
-      UserCredential userCredential =
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailTextController.text,
-        password: _passwordTextController.text,
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5151/api/Auth/register'), // Replace with your API endpoint URL
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'firstName': _firstNameTextController.text,
+          'lastName': _lastNameTextController.text,
+          'email': _emailTextController.text,
+          'password': _passwordTextController.text,
+        }),
       );
 
-      // Add user details to Firestore
-      await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-        'firstName': _firstNameTextController.text,
-        'lastName': _lastNameTextController.text,
-        'email': _emailTextController.text,
-        // Add more user details as needed
-      });
+      if (response.statusCode == 200) {
+        String user = jsonEncode(<String, String>{
+          'firstName': _firstNameTextController.text,
+          'lastName': _lastNameTextController.text,
+          'email': _emailTextController.text,
+        });
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('user', user);
 
-      // Navigate to HomeScreen after successful registration
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+        // Navigate to HomeScreen after successful registration
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      } else {
+        throw Exception('Failed to register');
+      }
     } catch (e) {
       // Handle errors
       print('Failed to register: $e');
       // Display error to the user
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Failed to register'),
         ),
       );
@@ -72,7 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Container(
                     height: 620.0,
                     width: size.width,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(40.0),
@@ -80,11 +92,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: Column(
                         children: <Widget>[
-                          SizedBox(height: 30),
-                          Text(
+                          const SizedBox(height: 30),
+                          const Text(
                             "Create an account ",
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -93,31 +105,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           reusableTextField(
                               " First Name", Icons.person_outline, false, _firstNameTextController),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           reusableTextField(
                               " Last Name", Icons.person_outline, false, _lastNameTextController),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           reusableTextField(" Email", Icons.mail_outline, false, _emailTextController),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           reusableTextField(
                               " Password", Icons.lock_outline, true, _passwordTextController),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           signInSignUpButton(context, false, _register),
                           signInOption(),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                         ],
@@ -141,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             style: TextStyle(color: Colors.black54, fontSize: 16, fontWeight: FontWeight.bold)),
         GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
           },
           child: const Text(
             "Log In",
