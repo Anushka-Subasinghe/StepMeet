@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getUserDetails().then((value) => fetchAndStoreFavorites()); // Call getUserDetails function when the widget is initialized
+    getUserDetails().then((value) => fetchAndStoreFavoritesAndComments()); // Call getUserDetails function when the widget is initialized
   }
 
   Future<void> getUserDetails() async {
@@ -39,11 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> fetchAndStoreFavorites() async {
+  Future<void> fetchAndStoreFavoritesAndComments() async {
     try {
       // Fetch favorites from API
       String encodedEmail = Uri.encodeComponent(user['email']);
-
+      late List<int> favoriteTrailIds;
       final responseFavorites = await http.get(
         Uri.parse('http://10.0.2.2:5151/api/users/$encodedEmail/favorites'),
       );
@@ -52,46 +52,85 @@ class _HomeScreenState extends State<HomeScreen> {
         final List<dynamic> dataFavorites = jsonDecode(responseFavorites.body);
         favoriteTrailIds = List<int>.from(dataFavorites);
 
-        // Fetch completed trails from API
-        final responseCompleted = await http.get(
-          Uri.parse('http://10.0.2.2:5151/api/users/$encodedEmail/completed'),
-        );
-
-        if (responseCompleted.statusCode == 200) {
-          final List<dynamic> dataCompleted = jsonDecode(responseCompleted.body);
-          final List<int> completedTrailIds = List<int>.from(dataCompleted);
-
-          // Store favorites in SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setStringList('favoriteTrailIds', favoriteTrailIds.map((id) => id.toString()).toList());
-
-          // Update trailList with isfavorite property
-          trail.trailList = trail.trailList.map((thisTrail) {
-            final isFavorite = favoriteTrailIds.contains(thisTrail.trailID);
-            final isCompleted = completedTrailIds.contains(thisTrail.trailID);
-
-            thisTrail.isfavorite = isFavorite;
-
-            if (isCompleted) {
-              trail.addCompletedTrail(thisTrail); // Add the completed trail
-            }
-
-            return thisTrail;
-          }).toList();
-        } else {
-          print(responseCompleted.statusCode);
-          throw Exception('Failed to fetch completed trails');
-        }
+        // Update trailList with isfavorite property
+        trail.trailList = trail.trailList.map((thisTrail) {
+          final isFavorite = favoriteTrailIds.contains(thisTrail.trailID);
+          thisTrail.isfavorite = isFavorite;
+          return thisTrail;
+        }).toList();
       } else {
-        print(responseFavorites.statusCode);
+        print('Error fetching favorites: ${responseFavorites.body}');
         throw Exception('Failed to fetch favorites');
       }
     } catch (e) {
       print('Error fetching favorites: $e');
     }
+
+    try {
+      // Fetch completed trails from API
+      String encodedEmail = Uri.encodeComponent(user['email']);
+      final responseCompleted = await http.get(
+        Uri.parse('http://10.0.2.2:5151/api/users/$encodedEmail/completed'),
+      );
+
+      if (responseCompleted.statusCode == 200) {
+        final List<dynamic> dataCompleted = jsonDecode(responseCompleted.body);
+        final List<int> completedTrailIds = List<int>.from(dataCompleted);
+
+        // Store favorites in SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setStringList('favoriteTrailIds',
+            completedTrailIds.map((id) => id.toString()).toList());
+
+        // Update trailList with completed property
+        trail.trailList = trail.trailList.map((thisTrail) {
+          final isCompleted = completedTrailIds.contains(thisTrail.trailID);
+
+          if (isCompleted) {
+            trail.addCompletedTrail(thisTrail); // Add the completed trail
+          }
+
+          return thisTrail;
+        }).toList();
+      } else {
+        print('Error fetching completed trails: ${responseCompleted.body}');
+        throw Exception('Failed to fetch completed trails');
+      }
+    } catch (e) {
+      print('Error fetching completed trails: $e');
+    }
+
+    try {
+      // Fetch comments for completed trails
+      String encodedEmail = Uri.encodeComponent(user['email']);
+      final responseComments = await http.get(
+        Uri.parse('http://10.0.2.2:5151/api/users/$encodedEmail/comments'),
+      );
+
+      if (responseComments.statusCode == 200) {
+        final List<dynamic> dataComments = jsonDecode(responseComments.body);
+        List<Map<String, dynamic>> allComments = List<Map<String, dynamic>>.from(dataComments);
+        print(allComments);
+
+        // Map comments to the relevant completed trails
+        for (var comment in allComments) {
+          String commentText = comment['comment'];
+          int commentTrailID = comment['trailID'];
+
+          // Find the completed trail with the corresponding ID
+          trail completedTrail = trail.trailList.firstWhere((trail) => trail.trailID == commentTrailID);
+
+          // Add the comment to the completed trail
+          trail.addCommentToCompletedTrail(commentText, completedTrail);
+        }
+      } else {
+        print('Error fetching comments: ${responseComments.body}');
+        throw Exception('Failed to fetch comments');
+      }
+    } catch (e) {
+      print('Error fetching comments: $e');
+    }
   }
-
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/user_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'navigation_bar.dart';
 import '../reusable_widgets/user_widget.dart';
+import 'package:http/http.dart' as http;
+
 class SearchUsersScreen extends StatefulWidget {
 
   const SearchUsersScreen({Key?key}):super(key:key);
@@ -10,35 +15,90 @@ class SearchUsersScreen extends StatefulWidget {
   _SearchUsersScreenState createState()=>_SearchUsersScreenState();
 }
 class _SearchUsersScreenState extends State<SearchUsersScreen> {
-  List<user> _userList = user.userList;
+  late Map<String, dynamic> currentUser = {};
+
+  Future<void> getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      // Parse the user JSON string back to a map
+      setState(() {
+        currentUser = jsonDecode(userJson);
+      });
+      // Now you can use the 'user' map as needed
+      print('User: $user');
+    } else {
+      print('User data not found in shared preferences');
+    }
+  }
 
   // This list holds the data for the list view
   List<user> _foundUsers = [];
   @override
   initState() {
-    // at the beginning, all trails are shown
-    _foundUsers = _foundUsers;
+    getUserDetails(); // Call getUserDetails function when the widget is initialized
     super.initState();
   }
   // This function is called whenever the text field changes
-  void _runFilter(String enteredKeyword) {
+  void _runFilter(String enteredKeyword) async {
     List<user> results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, display all trails
-      results = _userList;
+      results = [];
+      setState(() {
+        _foundUsers = results;
+      });
     } else {
-      results = _userList
-          .where((user) =>
-          user.userName.toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
-      // use the toLowerCase() method to make it case-insensitive
-    }
+      try {
+        final response = await http.get(
+          Uri.parse('http://10.0.2.2:5151/api/users/search/$enteredKeyword'),
+        );
 
-    // Refresh the UI
-    setState(() {
-      _foundUsers = results;
-    });
+        if (response.statusCode == 200) {
+          // Parse the response JSON
+          List<dynamic> usersData = json.decode(response.body);
+
+          print(usersData[0]);
+
+          // Get the email of the current user
+          String currentUserEmail = currentUser['email']; // Assuming 'user' is the current user object
+
+          results = usersData
+              .where((userData) => userData['email'] != currentUserEmail) // Filter out the current user
+              .map((userData) {
+            int index = usersData.indexOf(userData);
+
+            return user(
+              userID: index,
+              userName: usersData[index]['firstName'] + ' ' + usersData[index]['lastName'],
+              email: usersData[index]['email'],
+              isPrivate: usersData[index]['isPrivate'],
+              dpURL :'assets/images/Mynydd-Gelliwion.jpg',
+              hasFollowed : false,
+            );
+          }).toList();
+
+          // // Convert the JSON data to a list of User objects
+          // results = usersData.map((userData) => User.fromJson(userData)).toList();
+          //
+          // // Refresh the UI
+          setState(() {
+            _foundUsers = results;
+          });
+
+        } else {
+          setState(() {
+            _foundUsers = [];
+          });
+          throw Exception('Failed to load users');
+        }
+      } catch (e) {
+        print('Error: $e');
+        // Handle error
+      }
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

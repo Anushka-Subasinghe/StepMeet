@@ -3,6 +3,8 @@ import 'package:final_project1/Screens/setting_screens/about_stepmeet.dart';
 import 'package:final_project1/Screens/setting_screens/account_settings.dart';
 import 'package:final_project1/Screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:final_project1/Models/Map_list.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key?key}):super(key:key);
@@ -69,7 +71,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               MaterialPageRoute(builder: (context) => FeedbackScreen()));}),
                           SettingsButton1(context, (){ Navigator.push(context,
                               MaterialPageRoute(builder: (context) => InfoScreen()));}),
-                         LogoutButton(context, (){ Navigator.push(context,
+                         LogoutButton(context, () async {
+                           // Clear SharedPreferences
+                           SharedPreferences prefs = await SharedPreferences.getInstance();
+                           await prefs.clear();
+                           trail.clearList();
+                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) => WelcomeScreen(title: 'My App',)));}),
                         ],),
                     ),

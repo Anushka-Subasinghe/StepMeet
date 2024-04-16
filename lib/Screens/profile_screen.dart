@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../reusable_widgets/trail_widget.dart';
 import '../reusable_widgets/comment_widget.dart';
 import 'following_screen.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatefulWidget {
   final Uint8List? imageData;
@@ -18,14 +19,13 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 class _ProfileScreenState extends State<ProfileScreen> {
-  Uint8List? _image;
+  Uint8List? profilePicture;
   late Map<String, dynamic> user = {};
 
   @override
   void initState() {
     super.initState();
-    _image = widget.imageData;
-    getUserDetails();
+    getUserDetails().then((value) => fetchProfilePicture(user['email']));
   }
 
   Future<void> getUserDetails() async {
@@ -40,6 +40,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('User: $user');
     } else {
       print('User data not found in shared preferences');
+    }
+  }
+
+  Future<void> fetchProfilePicture(String email) async {
+    try {
+      final response = await http.get(
+          Uri.parse('http://10.0.2.2:5151/api/users/$email/profile-picture'));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          profilePicture = response.bodyBytes;
+        });
+      } else {
+        throw Exception('Failed to load profile picture');
+      }
+    } catch (e) {
+      print('Error fetching profile picture: $e');
     }
   }
 
@@ -58,6 +75,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            IconButton(
+              iconSize: 30,
+              color: Color(0xffcae5e5),
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
             Text(
               "Your Profile",
               style: TextStyle(
@@ -169,10 +192,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                                   child: CommentWidget(
                                     comment: completedTrailComments[index],
-                                    onDelete: () {
-                                      setState(() {
-                                        completedTrailComments.removeAt(index);
-                                      });
+                                    onDelete: () async {
+                                      final String apiUrl = 'http://10.0.2.2:5151/api/users/${user['email']}/comments/$index';
+
+                                      try {
+                                        final response = await http.delete(Uri.parse(apiUrl));
+
+                                        if (response.statusCode == 200) {
+                                          print('Comment deleted successfully.');
+                                          setState(() {
+                                            completedTrailComments.removeAt(index);
+                                          });
+                                        } else if (response.statusCode == 404) {
+                                          print('Comment index out of range or comments not found for this user.');
+                                        } else if (response.statusCode == 500) {
+                                          print('Error: ${response.body}');
+                                        } else {
+                                          print('Failed to delete comment: ${response.statusCode}');
+                                        }
+                                      } catch (e) {
+                                        print('Error deleting comment: $e');
+                                      }
                                     },
                                   ),
                                 );
@@ -212,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-                _image != null ?
+                profilePicture != null ?
                 Positioned(
                   top: 90,
                   left:155,
@@ -223,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.transparent,
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: MemoryImage(_image!),
+                        image: MemoryImage(profilePicture!),
                         fit: BoxFit.cover,
                       ),
                     ),

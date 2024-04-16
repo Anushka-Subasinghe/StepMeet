@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:final_project1/Models/Map_list.dart';
 import 'package:final_project1/Screens/share_screen.dart';
 import 'package:final_project1/Screens/profile_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ObservationScreen extends StatefulWidget {
   const ObservationScreen({Key? key}) : super(key: key);
@@ -14,6 +18,27 @@ class _ObservationScreenState extends State<ObservationScreen> {
   final TextEditingController _textController = TextEditingController();
   List<trail> completedTrails = trail.completedTrails;
   int selectedIndex = 0;
+  late Map<String, dynamic> user;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserDetails();
+  }
+
+  Future<void> getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userJson = prefs.getString('user');
+    if (userJson != null) {
+      // Parse the user JSON string back to a map
+      user = jsonDecode(userJson);
+
+      // Now you can use the 'user' map as needed
+      print('User: $user');
+    } else {
+      print('User data not found in shared preferences');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,30 +236,61 @@ class _ObservationScreenState extends State<ObservationScreen> {
     );
   }
 
-  void addCommentToCompletedTrail(BuildContext context) {
-    String observation = _textController.text.trim();
-    trail completedTrail = trail.completedTrails.last; // Get the last completed trail
-    trail.addCommentToCompletedTrail(observation, completedTrail);
-    _textController.clear();
-    setState(() {});
+  void addCommentToCompletedTrail(BuildContext context) async {
+    try {
+      String observation = _textController.text.trim();
+      // Check if the observation is not empty
+      if (observation.isNotEmpty) {
+        trail completedTrail = trail.completedTrails.last; // Get the last completed trail
+        int trailID = completedTrail.trailID; // Get the trail ID
+        _textController.clear();
+        setState(() {});
 
-    // Show dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Comment Added"),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
+        // Send HTTP POST request to add comment to completed trail
+        final response = await http.post(
+          Uri.parse('http://10.0.2.2:5151/api/users/${user['email']}/completed/$trailID/comments'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(observation), // Send observation directly as a JSON string
         );
-      },
-    );
+
+        if (response.statusCode == 200) {
+          // Comment added successfully
+          print('Comment added successfully to the backend.');
+          trail.addCommentToCompletedTrail(observation, completedTrail);
+          // Show dialog
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Comment Added"),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          // Failed to add comment to backend, handle error
+          print('Failed to add comment to backend: ${response.statusCode}');
+          print(response.body);
+        }
+      } else {
+        // Handle empty observation
+        print('Observation is empty.');
+      }
+    } catch (e) {
+      print('Error adding comment: $e');
+      // Handle error
+    }
   }
+
+
 
 }

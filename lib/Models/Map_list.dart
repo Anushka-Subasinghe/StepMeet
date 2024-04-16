@@ -212,9 +212,16 @@ class trail{
     String combinedString = "${completedTrail.name}:  $comment";
     completedTrail.hasCommented = true; // Set hasCommented to true
     completedTrailComments.add(combinedString); // Add combined string to the list
-
   }
 
+  static void clearList() {
+    for (var e in trail.trailList) {
+      e.hasCommented = false;
+      e.isfavorite = false;
+    }
+    completedTrailComments = [];
+    completedTrails = [];
+  }
 }
 
 

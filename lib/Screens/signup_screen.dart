@@ -50,6 +50,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
+        print(response.body);
         throw Exception('Failed to register');
       }
     } catch (e) {
